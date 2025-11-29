@@ -44,7 +44,7 @@ export default function NavBar({ title }) {
         <div className="flex justify-between w-full bg-[#F5BAA7] items-center p-4">
             <div className="text-white font-bold text-xl">
                 <Link href="/">
-                    <button className="hover:underline cursor-pointer">{title}</button>
+                    <button className="cursor-pointer">{title}</button>
                 </Link>
             </div>
             <ul className="flex gap-6 list-none items-center">
@@ -52,7 +52,7 @@ export default function NavBar({ title }) {
                     <li key={btn.name}>
                         <Link href={btn.route}>
                             <button
-                                className={`text-white font-semibold p-2 ${btn.name === "Login" ? "w-20 h-12 bg-[#D17368] rounded hover:underline cursor-pointer" : "hover:underline cursor-pointer"
+                                className={`text-white font-semibold p-2 ${btn.name === "Login" ? "w-20 h-12 bg-[#D17368] rounded hover:bg-[#b5645b] transition duration-300 cursor-pointer" : "w-20 h-12 rounded hover:bg-[#d99c89] transition duration-300 cursor-pointer"
                                     }`}
                             >
                                 {btn.name}
