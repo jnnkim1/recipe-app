@@ -7,6 +7,10 @@
   font-weight: 100;
   font-style: normal;
 }
+
+::placeholder {
+  color: #ffffff;
+}
 /* :root {
   --background: #ffffff;
   --foreground: #171717;

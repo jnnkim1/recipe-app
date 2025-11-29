@@ -11,6 +11,7 @@ export default function Register() {
               <label className="mt-1 ml-3 font-bold text-[#D17368]">First Name</label>
               <input
                 type="Name"
+                placeholder="Enter your name"
                 className="bg-[#F5BAA7] rounded-xl border-2 border-[#D17368] px-4 py-3 transition duration-300 focus:opacity-80 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
               />
             </div>
@@ -18,6 +19,7 @@ export default function Register() {
               <label className="mt-1 ml-3 font-bold text-[#D17368]">Username</label>
               <input
                 type="Username"
+                placeholder="Enter your username"
                 className="bg-[#F5BAA7] rounded-xl border-2 border-[#D17368] px-4 py-3 transition duration-300 focus:opacity-80 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
               />
             </div>
@@ -25,6 +27,7 @@ export default function Register() {
               <label className="mt-1 ml-3 font-bold text-[#D17368]">Password</label>
               <input
                 type="Password"
+                placeholder="Enter your password"
                 className="bg-[#F5BAA7] rounded-xl border-2 border-[#D17368] px-4 py-3 transition duration-300 focus:opacity-80 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
               />
             </div>
