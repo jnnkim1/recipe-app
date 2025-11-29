@@ -21,12 +21,12 @@ export default function Home() {
           </p>
           <section className="flex flex-row flex-wrap justify-center items-center gap-10">
             <Link href="/register">
-              <button className="bg-[#D17368] text-white font-semibold w-51 h-12 rounded hover:bg-[#b5645b] transition duration-300 cursor-pointer">
+              <button className="bg-[#D17368] text-white font-semibold w-51 h-12 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer">
                 Register
               </button>
             </Link>
             <Link href="/login">
-              <button className="bg-[#FFF2DF] text-[#D17368] font-semibold w-51 h-12 rounded border-3 border-[#D17368] hover:bg-[#ffe8c7] transition duration-300 cursor-pointer">
+              <button className="bg-[#FFF2DF] text-[#D17368] font-semibold w-51 h-12 rounded-xl border-3 border-[#D17368] hover:bg-[#ffe8c7] transition duration-300 cursor-pointer">
                 Login
               </button>
             </Link>

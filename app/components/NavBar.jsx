@@ -52,7 +52,7 @@ export default function NavBar({ title }) {
                     <li key={btn.name}>
                         <Link href={btn.route}>
                             <button
-                                className={`text-white font-semibold p-2 ${btn.name === "Login" ? "w-20 h-12 bg-[#D17368] rounded hover:bg-[#b5645b] transition duration-300 cursor-pointer" : "w-20 h-12 rounded hover:bg-[#d99c89] transition duration-300 cursor-pointer"
+                                className={`text-white font-semibold p-2 ${btn.name === "Login" ? "w-20 h-12 bg-[#D17368] rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer" : "w-20 h-12 rounded-xl hover:bg-[#d99c89] transition duration-300 cursor-pointer"
                                     }`}
                             >
                                 {btn.name}
