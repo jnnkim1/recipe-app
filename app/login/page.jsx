@@ -8,7 +8,7 @@ export default function Login() {
           {/* <section> */}
           <form className="flex flex-col gap-4 w-full max-w-sm mx-auto mt-5">
             <div className="flex flex-col gap-1">
-              <label className="mt-1 ml-3 font-bold text-[#D17368]">Name</label>
+              <label className="mt-1 ml-3 font-bold text-[#D17368]">Userame</label>
               <input
                 type="Username"
                 className="bg-[#F5BAA7] rounded-xl border-2 border-[#D17368] px-4 py-3 transition duration-300 focus:opacity-80 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
