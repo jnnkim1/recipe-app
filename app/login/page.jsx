@@ -1,4 +1,32 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Login() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      router.push("/profilepage");
+    } else {
+      setError(data.error || "Login failed");
+    }
+  };
+
+
   return (
     <div className="flex flex-col min-h-screen">
 
@@ -6,13 +34,17 @@ export default function Login() {
         <section className="w-1/2 justify-center items-center flex flex-col mt-15">
           <h1 className="text-7xl font-bold text-[#D17368]">LOGIN</h1>
           {/* <section> */}
-          <form className="flex flex-col gap-4 w-full max-w-sm mx-auto mt-5">
+          <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full max-w-sm mx-auto mt-5">
+            {error && <p className="text-red-500 text-sm">{error}</p>}
             <div className="flex flex-col gap-1">
-              <label className="mt-1 ml-3 font-bold text-[#D17368]">Userame</label>
+              <label className="mt-1 ml-3 font-bold text-[#D17368]">Username</label>
               <input
                 type="Username"
                 placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="bg-[#F5BAA7] rounded-xl border-2 border-[#D17368] px-4 py-3 transition duration-300 focus:opacity-80 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
+                required
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -20,11 +52,15 @@ export default function Login() {
               <input
                 type="Password"
                 placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="bg-[#F5BAA7] rounded-xl border-2 border-[#D17368] px-4 py-3 transition duration-300 focus:opacity-80 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
+                required
               />
             </div>
 
-            <button className="bg-[#D17368] mt-5 text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer">
+            <button type="submit"
+              className="bg-[#D17368] mt-5 text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer">
               Login
             </button>
             <div className="flex justify-center items-center gap-2 mt-2">

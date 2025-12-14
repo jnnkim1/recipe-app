@@ -14,11 +14,11 @@ export default function NavBar({ title }) {
             { name: "About", route: "/about" },
             { name: "Login", route: "/login" },
         ];
-    } else if (pathname === "/about") {
+    } else if (pathname === "/profilepage") {
         buttons = [
-            { name: "Home", route: "/" },
+            { name: "Home", route: "/profilepage" },
             { name: "Recipes", route: "/recipes" },
-            { name: "Login", route: "/login" },
+            { name: "Cook", route: "/cook" },
         ];
     } else if (pathname === "/register") {
         buttons = [
