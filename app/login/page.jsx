@@ -1,28 +1,32 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+    const result = await signIn("credentials", {
+      username,
+      password,
+      redirect: false,
     });
 
-    const data = await res.json();
+    setLoading(false);
 
-    if (res.ok && data.success) {
+    if (result?.ok) {
       router.push("/profilepage");
     } else {
-      setError(data.error || "Login failed");
+      setError(result?.error || "Login failed");
     }
   };
 
@@ -39,7 +43,7 @@ export default function Login() {
             <div className="flex flex-col gap-1">
               <label className="mt-1 ml-3 font-bold text-[#D17368]">Username</label>
               <input
-                type="Username"
+                type="text"
                 placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -50,7 +54,7 @@ export default function Login() {
             <div className="flex flex-col gap-1">
               <label className="mt-1 ml-3 font-bold text-[#D17368]">Password</label>
               <input
-                type="Password"
+                type="password"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -59,9 +63,9 @@ export default function Login() {
               />
             </div>
 
-            <button type="submit"
-              className="bg-[#D17368] mt-5 text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer">
-              Login
+            <button type="submit" disabled={loading}
+              className="bg-[#D17368] mt-5 text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? "Logging in..." : "Login"}
             </button>
             <div className="flex justify-center items-center gap-2 mt-2">
               <span>Don't have an account? </span>
