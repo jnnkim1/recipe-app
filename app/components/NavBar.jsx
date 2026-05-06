@@ -1,11 +1,22 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 
 export default function NavBar({ title }) {
     const pathname = usePathname();
+    const { data: session, status } = useSession();
+    const isAuthenticated = status === "authenticated";
 
-    // Define button sets per page
+    const handleLogout = async () => {
+        const response = await fetch("/api/logout", { method: "POST" });
+        if (response.ok) {
+            await signOut({ redirect: true, callbackUrl: "/" });
+        } else {
+            console.error("Logout failed");
+        }
+    };
+
     let buttons = [];
 
     if (pathname === "/") {
@@ -16,10 +27,12 @@ export default function NavBar({ title }) {
         ];
     } else if (pathname === "/profilepage") {
         buttons = [
-            { name: "Home", route: "/profilepage" },
             { name: "Recipes", route: "/recipes" },
             { name: "Cook", route: "/cook" },
         ];
+        if (isAuthenticated) {
+            buttons.push({ name: "Logout", action: handleLogout });
+        }
     } else if (pathname === "/register") {
         buttons = [
             { name: "Home", route: "/" },
@@ -32,6 +45,22 @@ export default function NavBar({ title }) {
             { name: "About", route: "/about" },
             { name: "Register", route: "/register" },
         ];
+    } else if (pathname === "/recipes") {
+        buttons = [
+            { name: "Home", route: "/profilepage" },
+            { name: "Cook", route: "/cook" },
+        ];
+        if (isAuthenticated) {
+            buttons.push({ name: "Logout", action: handleLogout });
+        }
+    } else if (pathname === "/cook") {
+        buttons = [
+            { name: "Home", route: "/profilepage" },
+            { name: "Recipes", route: "/recipes" }
+        ];
+        if (isAuthenticated) {
+            buttons.push({ name: "Logout", action: handleLogout });
+        }
     } else {
         buttons = [
             { name: "Home", route: "/" },
@@ -50,14 +79,24 @@ export default function NavBar({ title }) {
             <ul className="flex gap-6 list-none items-center">
                 {buttons.map((btn) => (
                     <li key={btn.name}>
-                        <Link href={btn.route}>
+                        {btn.action ? (
                             <button
-                                className={`text-white font-semibold p-2 ${(btn.name === "Login" || btn.name === "Register") ? "w-22 h-12 bg-[#D17368] rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer" : "w-20 h-12 rounded-xl hover:bg-[#d99c89] transition duration-300 cursor-pointer"
+                                onClick={btn.action}
+                                className={`text-white font-semibold p-2 ${(btn.name === "Login" || btn.name === "Register" || btn.name === "Logout") ? "w-22 h-12 bg-[#D17368] rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer" : "w-20 h-12 rounded-xl hover:bg-[#d99c89] transition duration-300 cursor-pointer"
                                     }`}
                             >
                                 {btn.name}
                             </button>
-                        </Link>
+                        ) : (
+                            <Link href={btn.route}>
+                                <button
+                                    className={`text-white font-semibold p-2 ${(btn.name === "Login" || btn.name === "Register" || btn.name === "Logout") ? "w-22 h-12 bg-[#D17368] rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer" : "w-20 h-12 rounded-xl hover:bg-[#d99c89] transition duration-300 cursor-pointer"
+                                        }`}
+                                >
+                                    {btn.name}
+                                </button>
+                            </Link>
+                        )}
                     </li>
                 ))}
             </ul>

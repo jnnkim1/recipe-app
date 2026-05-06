@@ -1,4 +1,3 @@
-// app/api/register/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/mongodb";
 import bcrypt from "bcryptjs";

@@ -4,19 +4,6 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 import { ObjectId } from "mongodb";
 
-export async function GET() {
-  try {
-    const client = await clientPromise;
-    const db = client.db(process.env.MONGODB_DB);
-    const recipes = await db.collection("recipes").find({}).toArray();
-
-    return NextResponse.json(recipes);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.error();
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Get the user session/token

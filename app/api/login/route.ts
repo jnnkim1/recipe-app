@@ -1,4 +1,3 @@
-// app/api/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
@@ -9,7 +8,7 @@ export async function POST(req: NextRequest) {
         const { username, password } = body;
 
         if (!username || !password) {
-            return NextResponse.json({ error: "Esername and password are required" }, { status: 400 });
+            return NextResponse.json({ error: "Username and password are required" }, { status: 400 });
         }
 
         const db = await getDB("recipe-app");
