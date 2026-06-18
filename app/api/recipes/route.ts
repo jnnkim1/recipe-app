@@ -4,11 +4,17 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 import { ObjectId } from "mongodb";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const client = await clientPromise;
     const db = client.db(process.env.MONGODB_DB);
-    const recipes = await db.collection("recipes").find({}).toArray();
+    const recipes = await db.collection("recipes").find({ userId: token.sub }).toArray();
 
     return NextResponse.json(recipes);
   } catch (error) {
@@ -19,7 +25,6 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the user session/token
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
     
     if (!token) {
@@ -102,13 +107,13 @@ export async function PATCH(request: NextRequest) {
     }
 
     const result = await db.collection("recipes").updateOne(
-      { _id: new ObjectId(recipeId) },
+      { _id: new ObjectId(recipeId), userId: token.sub },
       { $set: updateData }
     );
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
-        { error: "Recipe not found" },
+        { error: "Recipe not found or unauthorized" },
         { status: 404 }
       );
     }
