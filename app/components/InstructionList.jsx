@@ -1,20 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-export default function InstructionList({ value = null, onChange = null }) {
-  const [instructions, setInstructions] = useState([{ step: "" }]);
-
-  useEffect(() => {
-    if (value) {
-      setInstructions(value);
-    }
-  }, [value]);
+export default function InstructionList({ value = [{ step: "" }], onChange = null }) {
+  const instructions = value;
 
   const handleChange = (index, val) => {
-    const updated = [...instructions];
-    updated[index].step = val;
-    setInstructions(updated);
+    const updated = instructions.map((instruction, instructionIndex) =>
+      instructionIndex === index
+        ? { ...instruction, step: val }
+        : instruction
+    );
     if (onChange) {
       onChange(updated);
     }
@@ -22,7 +16,6 @@ export default function InstructionList({ value = null, onChange = null }) {
 
   const addInstruction = () => {
     const updated = [...instructions, { step: "" }];
-    setInstructions(updated);
     if (onChange) {
       onChange(updated);
     }
@@ -30,7 +23,6 @@ export default function InstructionList({ value = null, onChange = null }) {
 
   const removeInstruction = (index) => {
     const updated = instructions.filter((_, i) => i !== index);
-    setInstructions(updated);
     if (onChange) {
       onChange(updated);
     }
@@ -45,7 +37,7 @@ export default function InstructionList({ value = null, onChange = null }) {
             value={instruction.step}
             onChange={(e) => handleChange(index, e.target.value)}
             placeholder={`Step ${index + 1}`}
-            className="w-full bg-[#F5BAA7] rounded-xl border-2 border-[#D17368] px-4 py-3 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
+            className="w-full bg-[#F5BAA7] text-[#4A2C2A] caret-[#D17368] rounded-xl border-2 border-[#D17368] px-4 py-3 focus:ring-2 focus:ring-[#D17368] focus:outline-none"
             required
           />
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import InstructionList from "../../components/InstructionList";
 
 export default function Instructions() {
@@ -60,6 +59,39 @@ export default function Instructions() {
     }
   };
 
+  const handleCancel = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to cancel? This recipe won't be saved and all of its information will be deleted."
+    );
+
+    if (!confirmed) return;
+
+    setLoading(true);
+    setError("");
+    const draftRecipeId = localStorage.getItem("currentRecipeId") || recipeId;
+
+    try {
+      if (draftRecipeId) {
+        const response = await fetch(`/api/recipes/${draftRecipeId}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok && response.status !== 404) {
+          const data = await response.json();
+          throw new Error(data.error || "Failed to delete the recipe");
+        }
+      }
+
+      localStorage.removeItem("currentRecipeId");
+      localStorage.removeItem("currentRecipeName");
+      setInstructions([{ step: "" }]);
+      router.push("/recipes");
+    } catch (err) {
+      setError(err.message || "Failed to cancel the recipe");
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="ml-12 pr-12">
       <h1 className="text-7xl font-bold text-[#D17368] mt-10 mb-10">{recipeName}</h1>
@@ -74,12 +106,21 @@ export default function Instructions() {
           {error}
         </div>
       )}
-      <button
-        onClick={handleSaveInstructions}
-        disabled={loading}
-        className="bg-[#D17368] mt-5 text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer w-1/3 disabled:opacity-50 disabled:cursor-not-allowed">
-        {loading ? "Finishing..." : "Done"}
-      </button>
+      <div className="mt-5 flex w-full gap-4">
+        <button
+          onClick={handleSaveInstructions}
+          disabled={loading}
+          className="flex-1 bg-[#D17368] text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          {loading ? "Finishing..." : "Done"}
+        </button>
+        <button
+          type="button"
+          onClick={handleCancel}
+          disabled={loading}
+          className="flex-1 bg-[#E7DEDB] px-6 text-[#D17368] font-semibold py-3 rounded-xl hover:bg-gray-300 transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          Cancel
+        </button>
+      </div>
     </main>
   );
 }

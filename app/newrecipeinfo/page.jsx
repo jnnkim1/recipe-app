@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-export default function newRecipe() {
+export default function NewRecipe() {
     const router = useRouter();
     const { data: session } = useSession();
     const [recipeName, setRecipeName] = useState("");
@@ -50,6 +50,41 @@ export default function newRecipe() {
             setError("An error occurred while saving the recipe");
             console.error(err);
         } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCancel = async () => {
+        const confirmed = window.confirm(
+            "Are you sure you want to cancel? This recipe won't be saved and all of its information will be deleted."
+        );
+
+        if (!confirmed) return;
+
+        setLoading(true);
+        setError("");
+        const draftRecipeId = localStorage.getItem("currentRecipeId");
+
+        try {
+            if (draftRecipeId) {
+                const response = await fetch(`/api/recipes/${draftRecipeId}`, {
+                    method: "DELETE",
+                });
+
+                if (!response.ok && response.status !== 404) {
+                    const data = await response.json();
+                    throw new Error(data.error || "Failed to delete the recipe");
+                }
+            }
+
+            localStorage.removeItem("currentRecipeId");
+            localStorage.removeItem("currentRecipeName");
+            setRecipeName("");
+            setDescription("");
+            setRecipeImage(null);
+            router.push("/recipes");
+        } catch (err) {
+            setError(err.message || "Failed to cancel the recipe");
             setLoading(false);
         }
     };
@@ -134,12 +169,21 @@ export default function newRecipe() {
                             />
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="bg-[#D17368] mt-5 text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer w-1/3 disabled:opacity-50 disabled:cursor-not-allowed">
-                            {loading ? "Saving..." : "Next: Add Ingredients"}
-                        </button>
+                        <div className="mt-5 flex w-full gap-4">
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="flex-1 bg-[#D17368] text-white font-semibold py-3 rounded-xl hover:bg-[#b5645b] transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                {loading ? "Saving..." : "Next: Add Ingredients"}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCancel}
+                                disabled={loading}
+                                className="flex-1 bg-[#E7DEDB] px-6 text-[#D17368] font-semibold py-3 rounded-xl hover:bg-gray-300 transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                Cancel
+                            </button>
+                        </div>
 
                     </section>
                 </form>
