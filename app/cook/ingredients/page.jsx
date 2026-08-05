@@ -1,10 +1,14 @@
-export default function CookIngredients() {
-  return (
-    <main className="p-10">
-      <h1 className="text-4xl font-bold text-[#D17368]">Ingredients</h1>
-      <p className="mt-4 text-lg text-gray-700">
-        This is the ingredients page.
-      </p>
-    </main>
-  );
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function CookIngredientsRedirect() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/cook");
+  }, [router]);
+
+  return <p className="p-10 text-[#D17368]">Opening cook mode...</p>;
 }

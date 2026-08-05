@@ -1,12 +1,15 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import CookRecipeModal from "./CookRecipeModal";
 
 export default function NavBar({ title }) {
     const pathname = usePathname();
-    const { data: session, status } = useSession();
+    const { status } = useSession();
     const isAuthenticated = status === "authenticated";
+    const [isCookModalOpen, setIsCookModalOpen] = useState(false);
 
     const handleLogout = async () => {
         const response = await fetch("/api/logout", { method: "POST" });
@@ -28,7 +31,7 @@ export default function NavBar({ title }) {
     } else if (pathname === "/profilepage") {
         buttons = [
             { name: "Recipes", route: "/recipes" },
-            { name: "Cook", route: "/cook" },
+            { name: "Log", route: "/cookhistory" },
         ];
         if (isAuthenticated) {
             buttons.push({ name: "Logout", action: handleLogout });
@@ -48,7 +51,7 @@ export default function NavBar({ title }) {
     } else if (pathname === "/recipes") {
         buttons = [
             { name: "Home", route: "/profilepage" },
-            { name: "Cook", route: "/cook" },
+            { name: "Log", route: "/cookhistory" },
         ];
         if (isAuthenticated) {
             buttons.push({ name: "Logout", action: handleLogout });
@@ -61,6 +64,22 @@ export default function NavBar({ title }) {
         if (isAuthenticated) {
             buttons.push({ name: "Logout", action: handleLogout });
         }
+    } else if (pathname === "/newrecipeinfo") {
+        buttons = [
+            { name: "Home", route: "/profilepage" },
+            { name: "Recipes", route: "/recipes" }
+        ];
+        if (isAuthenticated) {
+            buttons.push({ name: "Logout", action: handleLogout });
+        }
+    } else if (pathname === "/cookhistory") {
+        buttons = [
+            { name: "Recipes", route: "/recipes" },
+            { name: "Cook", route: "/cook" },
+        ];
+        if (isAuthenticated) {
+            buttons.push({ name: "Logout", action: handleLogout });
+        }
     } else {
         buttons = [
             { name: "Home", route: "/" },
@@ -69,10 +88,19 @@ export default function NavBar({ title }) {
         ];
     }
 
+    if (isAuthenticated) {
+        buttons = buttons.map((button) =>
+            button.name === "Cook"
+                ? { name: "Cook", action: () => setIsCookModalOpen(true) }
+                : button
+        );
+    }
+
     return (
+      <>
         <div className="flex justify-between w-full bg-[#F5BAA7] items-center p-4">
             <div className="text-white font-bold text-xl">
-                <Link href="/">
+                <Link href={isAuthenticated ? "/profilepage" : "/"}>
                     <button className="cursor-pointer">{title}</button>
                 </Link>
             </div>
@@ -101,5 +129,10 @@ export default function NavBar({ title }) {
                 ))}
             </ul>
         </div>
+        <CookRecipeModal
+          isOpen={isCookModalOpen}
+          onClose={() => setIsCookModalOpen(false)}
+        />
+      </>
     );
 }
