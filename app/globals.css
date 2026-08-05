@@ -35,3 +35,11 @@ body {
   background: #FFF2DF;
   font-family: 'Geist Mono', monospace;
 }
+
+.recipe-modal-scroll-area {
+  scrollbar-width: none;
+}
+
+.recipe-modal-scroll-area::-webkit-scrollbar {
+  display: none;
+}

@@ -6,7 +6,7 @@ import RecipeCard from "@/app/components/RecipeCard";
 import RecipeModal from "@/app/components/RecipeModal";
 
 export default function Recipes() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [recipes, setRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,8 +73,14 @@ export default function Recipes() {
     setSelectedRecipe(null);
   };
 
+  const handleRecipeDeleted = (recipeId) => {
+    setRecipes((current) => current.filter((recipe) => recipe._id !== recipeId));
+    setFilteredRecipes((current) => current.filter((recipe) => recipe._id !== recipeId));
+    handleCloseModal();
+  };
+
   return (
-    <main className="flex flex-col justify-center items-center min-h-screen bg-white">
+    <main className="flex flex-col justify-center items-center min-h-screen bg-[#FFF2DF]">
       <section className="w-1/2 justify-center items-center flex flex-col mt-10">
         <h1 className="text-7xl font-bold text-[#D17368]">MY RECIPES</h1>
         <input
@@ -122,9 +128,11 @@ export default function Recipes() {
       </section>
 
       <RecipeModal
+        key={selectedRecipe?._id ?? "closed"}
         recipe={selectedRecipe}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onDeleted={handleRecipeDeleted}
       />
     </main>
   );
