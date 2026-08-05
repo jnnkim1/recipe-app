@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
-export default function Login() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,12 +20,23 @@ export default function Login() {
       username,
       password,
       redirect: false,
+      callbackUrl: searchParams.get("callbackUrl") || "/profilepage",
     });
 
     setLoading(false);
 
     if (result?.ok) {
-      router.push("/profilepage");
+      const callbackUrl = searchParams.get("callbackUrl");
+      const destination = callbackUrl
+        ? new URL(callbackUrl, window.location.origin)
+        : new URL("/profilepage", window.location.origin);
+
+      router.push(
+        destination.origin === window.location.origin
+          ? `${destination.pathname}${destination.search}${destination.hash}`
+          : "/profilepage"
+      );
+      router.refresh();
     } else {
       setError(result?.error || "Login failed");
     }
@@ -39,6 +51,11 @@ export default function Login() {
           <h1 className="text-7xl font-bold text-[#D17368]">LOGIN</h1>
           {/* <section> */}
           <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full max-w-sm mx-auto mt-5">
+            {searchParams.get("error") === "authentication_required" && (
+              <p className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
+                You must be logged in to view that page.
+              </p>
+            )}
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <div className="flex flex-col gap-1">
               <label className="mt-1 ml-3 font-bold text-[#D17368]">Username</label>
@@ -68,7 +85,7 @@ export default function Login() {
               {loading ? "Logging in..." : "Login"}
             </button>
             <div className="flex justify-center items-center gap-2 mt-2">
-              <span>Don't have an account? </span>
+              <span>Don&apos;t have an account? </span>
               <a
                 href="/register"
                 className="text-[#D17368] font-semibold underline cursor-pointer"
@@ -88,5 +105,13 @@ export default function Login() {
             <small>© 2025 My React Site</small>
           </footer> */}
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
